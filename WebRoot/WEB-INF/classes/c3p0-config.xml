@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<c3p0-config>
+	<default-config>
+		<property name="user">javaee45</property>
+		<property name="password">javaee45</property>
+		<property name="driverClass">com.mysql.jdbc.Driver</property>
+		<!-- jdbc:mysql://localhost/em45?useUnicode=true&characterEncoding=utf-8 -->
+		<!-- jdbc:mysql://localhost/em45?useUnicode=true&amp;characterEncoding=utf-8 -->
+		<!-- &在xml文件中需要转义   & - &amp; -->
+		<property name="jdbcUrl">jdbc:mysql://localhost:3308/em45?useUnicode=true&amp;characterEncoding=utf-8</property>
+	</default-config> <!-- This app is massive! -->
+</c3p0-config> 

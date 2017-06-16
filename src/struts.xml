@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	<!-- 配置简单的主题风格 -->
+	<constant name="struts.ui.theme" value="simple"></constant>
+	<!-- 配置开发者模式 -->
+	<constant name="struts.devMode" value="true"></constant>
+	<!-- 配置国际化文件常量 -->
+	<constant name="struts.custom.i18n.resources" value="messages"></constant>
+	<!-- 配置上传文件总大小 -->
+	<constant name="struts.multipart.maxSize" value="10000000"></constant>
+
+	<package name="em45" extends="json-default" namespace="/">
+		
+		
+		
+		<!-- 配置拦截器 -->
+		<interceptors>
+			<!-- 声明拦截器 -->
+			<interceptor name="loginIn" class="cn.itcast.web.interceptor.LoginIntreceptor"></interceptor>
+			<!-- 新建一个拦截器栈 -->
+			<interceptor-stack name="myStack">
+				<interceptor-ref name="defaultStack">
+					<!-- 限制文件上传大小 单位byte -->
+					<param name="fileUpload.maximumSize">204800</param>
+					<!-- 限制文件类型 -->
+				<!-- <param name="fileUpload.allowedTypes">text/html</param> -->	
+					<!-- 限制后缀名 -->
+					<param name="fileUpload.allowedExtensions">.txt,.doc,.docx</param>
+				</interceptor-ref>
+				<interceptor-ref name="loginIn">
+					<!-- 放行 -->
+					<param name="excludeMethods">login</param>
+				</interceptor-ref>
+				<!-- token -->
+				<interceptor-ref name="token">
+					<!-- 拦截的方法 -->
+					<param name="includeMethods">login</param>
+				</interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		
+		<!-- 声明所有action都使用这个拦截器 -->
+		<default-interceptor-ref name="myStack"></default-interceptor-ref>
+		
+		<!-- 配置全局结果页面 -->
+		<global-results>
+			<result name="no_login">/login/login.jsp</result>
+			<!-- 处理全局异常错误 -->
+			<result name="error">/user/error.jsp</result>
+			<!-- 处理token错误 -->
+			<result name="invalid.token">/user/error.jsp</result>
+		</global-results>
+		
+		<!-- 配置全局异常 -->
+		<global-exception-mappings>
+			<exception-mapping result="error" exception="java.lang.Exception"></exception-mapping>
+		</global-exception-mappings>
+	
+		<!-- 配置连接数据库的action -->
+		<action name="testDb" class="cn.itcast.test.TestDbAction"></action>
+		<!-- 配置用户action -->
+		<action name="user_*" class="cn.itcast.web.action.UserAction" method="{1}">
+			<!-- 成功 -->
+			<!-- 跳转到home.jsp后，刷新时还是会调用action，设置跳转方式为redirect -->
+			<result name="loginSuccess" type="redirect" >/login/home.jsp</result>
+			<!-- 验证失败 -->
+			<result name="input">/login/login.jsp</result>
+			<!-- 添加用户成功 -->
+			<result name="addSuccess" type="redirectAction">user_list</result>
+			
+			<result name="addInput">/user/add.jsp</result>
+			
+			<!-- 返回json数据,需要配置type为json
+			package 继承 json-default
+			 -->
+			<!-- <result name="json" type="json"></result> -->
+			<!-- 数据在map栈中，json配置 -->
+			<result name="json" type="json">
+				<!-- 通过#resultMap 来获取map中的值，这里的root不是roo栈，他只是在
+				结果集类中定义的一个字符串变量 -->
+				<param name="root">#resultMap</param>
+			</result>
+			
+			<!-- 获取所有用户信息 -->
+			<result name="listSuccess">/user/list.jsp</result>
+			<!-- 删除用户 -->
+			<!-- redirectAction 防止刷新时重复删除数据 -->
+			<result name="deleteSuccess" type="redirectAction">user_list</result>
+			
+			<!-- 获取单个用户详情 -->
+			<result name="viewSuccess">/user/view.jsp</result>
+			
+			<!-- 简历下载 -->
+			<result name="downloadSuccess" type="stream"></result>
+			
+			<!-- 编辑用户 显示 -->
+			<result name="editSuccess">/user/edit.jsp</result>	
+			
+			<!-- 没有用户名提示 -->
+			<result name="eidtInput">/user/edit.jsp</result>
+			
+			<!-- 编辑用户 -->
+			<result name="toEditSuccess" type="redirectAction">user_list</result>
+						
+			
+		</action>
+		
+		
+		
+	</package>
+
+	
+</struts>
